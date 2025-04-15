@@ -1,0 +1,24 @@
+---
+- name: Install Nginx on multiple nodes
+  hosts: all
+  become: yes  # Use 'become' to run tasks as a privileged user
+  tasks:
+    - name: Update apt repository
+      apt:
+        update_cache: yes
+
+    - name: Install Nginx
+      apt:
+        name: nginx
+        state: present
+
+    - name: Start Nginx service
+      service:
+        name: nginx
+        state: started
+        enabled: yes
+
+    - name: Ensure firewall allows HTTP and HTTPS
+      ufw:
+        rule: allow
+        name: 'Nginx Full'
