@@ -17,8 +17,13 @@
         name: nginx
         state: started
         enabled: yes
-
+        
+    - name: Install UFW
+      apt:
+       name: ufw
+       state: present
+       
     - name: Ensure firewall allows HTTP and HTTPS
       ufw:
-        rule: allow
-        name: 'Nginx Full'
+       rule: allow
+       name: 'Nginx Full'
