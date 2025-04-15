@@ -1,5 +1,5 @@
 - name: Test connectivity
-  hosts: 3.106.165.222
+  hosts: all
   tasks:
     - name: Ping target machines
       ansible.builtin.ping:
