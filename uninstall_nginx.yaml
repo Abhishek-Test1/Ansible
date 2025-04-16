@@ -1,6 +1,6 @@
 ---
 - name: Uninstall Nginx
-  hosts: your_target_hosts
+  hosts: all
   become: yes
   tasks:
     - name: Remove Nginx
