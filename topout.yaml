@@ -5,7 +5,7 @@
     - name: Copy Bash script to managed node
       copy:
         src: topout.sh  # Correct path to your script on the AWX server
-        dest: /tmp/topout.shh      # Destination path on the managed node
+        dest: /tmp/topout.sh      # Destination path on the managed node
         mode: '0755'  # Make the script executable
 
     - name: Execute the Bash script
