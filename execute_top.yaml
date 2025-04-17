@@ -1,0 +1,11 @@
+---
+- name: Execute existing Bash script on managed nodes
+  hosts: managed_nodes  # Replace with your inventory group or specific hosts
+  tasks:
+    - name: Execute the Bash script
+      shell: /tmp/topout.sh  # Provide the absolute path to the script on the managed node
+      register: script_output     # Register output for later use
+
+    - name: Display script output
+      debug:
+        var: script_output.stdout  # Display the output of the script
