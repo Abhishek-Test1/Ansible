@@ -1,0 +1,17 @@
+---
+- name: Run Bash Shell Script on Managed Node
+  hosts: all  # Replace with your inventory group or host
+  tasks:
+    - name: Copy Bash script to managed node
+      copy:
+        src: /home/ubuntu/scripts/topout.sh  # Path to your script on the AWX server
+        dest: /tmp/topout.sh      # Destination path on the managed node
+        mode: '0755'  # Make the script executable
+
+    - name: Execute the Bash script
+      command: /tmp/topout.sh
+      register: script_output
+
+    - name: Display script output
+      debug:
+        var: script_output.stdout
