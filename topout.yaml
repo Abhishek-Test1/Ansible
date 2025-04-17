@@ -1,6 +1,6 @@
 ---
 - name: Run Bash Shell Script on Managed Node
-  hosts: managed_nodes  # Replace with your inventory group or host
+  hosts: all  # Replace with your inventory group or host
   tasks:
     - name: Copy Bash script to managed node
       copy:
