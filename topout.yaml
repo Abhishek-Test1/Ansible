@@ -4,7 +4,7 @@
   tasks:
     - name: Copy Bash script to managed node
       copy:
-        src: topout.sh  # Correct path to your script on the AWX server
+        src: topout.sh  # Correct path to your script on the GIT server
         dest: /tmp/topout.sh      # Destination path on the managed node
         mode: '0755'  # Make the script executable
 
