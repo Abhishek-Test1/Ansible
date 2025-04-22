@@ -4,7 +4,7 @@
   tasks:
     - name: Copy topout.sh script to managed nodes
       copy:
-        src: /tmp/topout.sh  # Path to the script on the control node
+        src: topout.sh  # Path to the script on the control node
         dest: /tmp/topout.sh      # Destination path on managed nodes
         mode: '0755'              # Set execute permission
 
