@@ -1,10 +1,16 @@
 ---
-- name: Execute existing Bash script on managed nodes
+- name: Copy and execute Bash script on managed nodes
   hosts: all  # Replace with your inventory group or specific hosts
   tasks:
+    - name: Copy topout.sh script to managed nodes
+      copy:
+        src: /home/ubuntu/scripts/topout.sh  # Path to the script on the control node
+        dest: /tmp/topout.sh      # Destination path on managed nodes
+        mode: '0755'              # Set execute permission
+
     - name: Execute the Bash script
       shell: /tmp/topout.sh  # Provide the absolute path to the script on the managed node
-      register: script_output     # Register output for later use
+      register: script_output  # Register output for later use
 
     - name: Display script output
       debug:
