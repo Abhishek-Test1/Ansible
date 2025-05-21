@@ -3,17 +3,17 @@
   hosts: localhost
   gather_facts: false
   tasks:
-    - name: Check if send_nsca exists
-      command: which send_nsca
-      register: send_nsca_path
-      ignore_errors: yes
+    - name: Check if send_nsca exists at /usr/sbin/send_nsca
+      stat:
+        path: /usr/sbin/send_nsca
+      register: send_nsca_stat
 
-    - name: Print send_nsca path
+    - name: Print send_nsca existence
       debug:
-        var: send_nsca_path.stdout
+        var: send_nsca_stat.stat.exists
 
     - name: Show send_nsca help output
-      command: send_nsca --help
+      command: /usr/sbin/send_nsca --help
       register: send_nsca_help
       ignore_errors: yes
 
