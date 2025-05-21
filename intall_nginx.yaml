@@ -1,18 +1,30 @@
 ---
-- name: Install Nginx on multiple nodes
+- name: Install Nginx on Ubuntu 24.04 safely
   hosts: all
-  become: yes  # Use 'become' to run tasks as a privileged user
+  become: yes
   tasks:
-    - name: Update apt repository
+
+    - name: Remove broken/unsupported third-party repos (Centreon, Sury)
+      file:
+        path: "/etc/apt/sources.list.d/{{ item }}"
+        state: absent
+      loop:
+        - php.list
+        - sury-php.list
+        - centreon.list
+      ignore_errors: yes
+
+    - name: Update apt cache after cleanup
       apt:
         update_cache: yes
+        cache_valid_time: 3600
 
     - name: Install Nginx
       apt:
         name: nginx
         state: present
 
-    - name: Start Nginx service
+    - name: Ensure Nginx is running and enabled
       service:
         name: nginx
         state: started
