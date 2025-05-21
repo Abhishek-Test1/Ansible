@@ -34,3 +34,4 @@
             printf "AWX-SERVER\tAWX Job Status\t{{ centreon_status }}\t{{ job_result_message }}\n" | \
             /usr/sbin/send_nsca -H {{ centreon_host_ip }} -c {{ nsca_cfg }}
           delegate_to: localhost
+          become: false
