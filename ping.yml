@@ -31,5 +31,7 @@
         - name: Send job status to Centreon
           shell: |
             echo "[$(date +%s)] PROCESS_SERVICE_CHECK_RESULT;AWX-SERVER;AWX Job Status;{{ centreon_status }};{{ job_result_message }}" \
-            >> /var/lib/centreon-engine/rw/centengine.cmd
+            | sudo -u centreon-engine tee -a /var/lib/centreon-engine/rw/centengine.cmd > /dev/null
           delegate_to: "{{ centreon_host_ip }}"
+          become: true
+          become_user: admin
