@@ -4,32 +4,32 @@
   gather_facts: false
   vars:
     centreon_host_ip: 13.239.232.132
-    centreon_status: "0"       # Default to OK
-    job_result_message: ""     # To hold the message sent to Centreon
+    centreon_status: "0"
+    job_result_message: ""
+
   tasks:
 
-    - name: Run main tasks and handle failures
-      block:
-    - name: Test connectivity
-      hosts: all
-      tasks:
+    - block:
+
         - name: Ping target machines
           ansible.builtin.ping:
 
-    - name: Set success status
-      set_fact:
-        centreon_status: "0"
-        job_result_message: "AWX Job '{{ tower_job_template_name | default('Unknown') }}' (#{{ tower_job_id | default('0') }}) completed successfully"
+        - name: Set success status
+          set_fact:
+            centreon_status: "0"
+            job_result_message: "AWX Job '{{ tower_job_template_name | default('Unknown') }}' (#{{ tower_job_id | default('0') }}) completed successfully"
 
-  rescue:
-    - name: Set failure status
-      set_fact:
-        centreon_status: "2"
-        job_result_message: "AWX Job '{{ tower_job_template_name | default('Unknown') }}' (#{{ tower_job_id | default('0') }}) FAILED"
+      rescue:
 
-  always:
-    - name: Send job status to Centreon
-      shell: |
-        echo "[$(date +%s)] PROCESS_SERVICE_CHECK_RESULT;AWX-SERVER;AWX Job Status;{{ centreon_status }};{{ job_result_message }}" \
-        >> /var/lib/centreon-engine/rw/centengine.cmd
-      delegate_to: "{{ centreon_host_ip }}"
+        - name: Set failure status
+          set_fact:
+            centreon_status: "2"
+            job_result_message: "AWX Job '{{ tower_job_template_name | default('Unknown') }}' (#{{ tower_job_id | default('0') }}) FAILED"
+
+      always:
+
+        - name: Send job status to Centreon
+          shell: |
+            echo "[$(date +%s)] PROCESS_SERVICE_CHECK_RESULT;AWX-SERVER;AWX Job Status;{{ centreon_status }};{{ job_result_message }}" \
+            >> /var/lib/centreon-engine/rw/centengine.cmd
+          delegate_to: "{{ centreon_host_ip }}"
