@@ -1,0 +1,22 @@
+---
+- name: Verify send_nsca presence
+  hosts: localhost
+  gather_facts: false
+  tasks:
+    - name: Check if send_nsca exists
+      command: which send_nsca
+      register: send_nsca_path
+      ignore_errors: yes
+
+    - name: Print send_nsca path
+      debug:
+        var: send_nsca_path.stdout
+
+    - name: Show send_nsca help output
+      command: send_nsca --help
+      register: send_nsca_help
+      ignore_errors: yes
+
+    - name: Print send_nsca help output
+      debug:
+        var: send_nsca_help.stdout
