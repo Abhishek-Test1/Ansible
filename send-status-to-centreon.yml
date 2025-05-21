@@ -2,23 +2,14 @@
 - name: Send job status to Centreon via NSCA
   hosts: localhost
   gather_facts: false
-  become: false
   vars:
-    centreon_host: "3.107.195.71"
-    nsca_port: 5667
-    service: "AWX Job Status"
-    hostname: "{{ ansible_hostname }}"
-    status_code: "{{ '0' if job_result == 'success' else '2' }}"
-    message: "AWX Job '{{ job_name }}' completed with status '{{ job_result }}'"
-
+    nsca_message: "{{ inventory_hostname }}\tJob_Status\t0\tJob completed successfully"
   tasks:
     - name: Create NSCA input line
       copy:
-        content: "{{ hostname }}\t{{ service }}\t{{ status_code }}\t{{ message }}\n"
-        dest: "/tmp/nsca_input.txt"
+        dest: /tmp/nsca_input.txt
+        content: "{{ nsca_message }}"
 
-    - name: Send status using send_nsca
+    - name: Send status to Centreon NSCA server
       command: >
-        send_nsca -H {{ centreon_host }} -p {{ nsca_port }}
-        -c /var/lib/awx/projects/_8__abhishek_test_project/send_nsca.cfg
-        < /tmp/nsca_input.txt
+        /usr/sbin/send_nsca -H {{ centreon_server_ip }} -c /etc/send_nsca.cfg < /tmp/nsca_input.txt
