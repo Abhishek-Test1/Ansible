@@ -1,7 +1,7 @@
 ---
 - name: Send job status to Centreon via NSCA
   hosts: localhost
-  gather_facts: yes
+  gather_facts: no  # <--- Disable to avoid sudo-related errors
 
   vars:
     status_code_map:
