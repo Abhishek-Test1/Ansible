@@ -1,7 +1,7 @@
 ---
 - name: Send job status to Centreon via NSCA
   hosts: localhost
-  gather_facts: no  # <--- Disable to avoid sudo-related errors
+  gather_facts: no
 
   vars:
     status_code_map:
@@ -20,7 +20,9 @@
       ansible.builtin.copy:
         dest: /tmp/nsca_input.txt
         content: "{{ centreon_host_name }};{{ centreon_service }};{{ centreon_status }};{{ centreon_message }}"
+      become: no   # <--- Add this
 
     - name: Send status to Centreon server using send_nsca
       ansible.builtin.command: >
         send_nsca -H {{ centreon_server_ip }} -c /etc/send_nsca.cfg < /tmp/nsca_input.txt
+      become: no   # <--- Add this
