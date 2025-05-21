@@ -1,37 +1,5 @@
----
-- name: Deploy WebApp with Centreon monitoring
+- name: Test connectivity
   hosts: all
-  gather_facts: false
-  vars:
-    centreon_host_ip: 13.239.232.132
-    centreon_status: "0"
-    job_result_message: ""
-    nsca_cfg: "/etc/send_nsca.cfg"
-
   tasks:
-
-    - block:
-
-        - name: Ping target machines
-          ansible.builtin.ping:
-
-        - name: Set success status
-          set_fact:
-            centreon_status: "0"
-            job_result_message: "AWX Job '{{ tower_job_template_name | default('Unknown') }}' (#{{ tower_job_id | default('0') }}) completed successfully"
-
-      rescue:
-
-        - name: Set failure status
-          set_fact:
-            centreon_status: "2"
-            job_result_message: "AWX Job '{{ tower_job_template_name | default('Unknown') }}' (#{{ tower_job_id | default('0') }}) FAILED"
-
-      always:
-
-        - name: Send job status to Centreon using NSCA
-          shell: |
-            printf "AWX-SERVER\tAWX Job Status\t{{ centreon_status }}\t{{ job_result_message }}\n" | \
-            /usr/sbin/send_nsca -H {{ centreon_host_ip }} -c {{ nsca_cfg }}
-          delegate_to: localhost
-          become: false
+    - name: Ping target machines
+      ansible.builtin.ping:
