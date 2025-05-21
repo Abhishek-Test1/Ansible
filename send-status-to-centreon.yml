@@ -1,28 +1,16 @@
 ---
 - name: Send job status to Centreon via NSCA
   hosts: localhost
-  gather_facts: no
-
-  vars:
-    status_code_map:
-      OK: 0
-      WARNING: 1
-      CRITICAL: 2
-      UNKNOWN: 3
+  gather_facts: false
 
   tasks:
-    - name: Map textual job_status to numeric Centreon status code
-      set_fact:
-        centreon_status: "{{ status_code_map[job_status] | default(3) }}"
-        centreon_message: "Job status: {{ job_status }}"
-
-    - name: Create NSCA input line in /tmp/nsca_input.txt
+    - name: Create NSCA input line
       ansible.builtin.copy:
         dest: /tmp/nsca_input.txt
-        content: "{{ centreon_host_name }};{{ centreon_service }};{{ centreon_status }};{{ centreon_message }}"
-      become: no   # <--- Add this
+        content: "{{ centreon_host_name }}\t{{ centreon_service }}\t{{ job_status }}\n"
+        mode: '0644'
 
     - name: Send status to Centreon server using send_nsca
-      ansible.builtin.command: >
+      ansible.builtin.shell: >
         send_nsca -H {{ centreon_server_ip }} -c /etc/send_nsca.cfg < /tmp/nsca_input.txt
-      become: no   # <--- Add this
+      become: no
