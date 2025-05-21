@@ -1,7 +1,8 @@
 ---
 - name: Send job status to Centreon via NSCA
   hosts: localhost
-  gather_facts: true
+  gather_facts: false
+  become: false
   vars:
     centreon_host: "3.107.195.71"
     nsca_port: 5667
