@@ -3,20 +3,17 @@
   hosts: localhost
   gather_facts: false
   tasks:
-    - name: Check if send_nsca exists at /usr/sbin/send_nsca
-      stat:
+    - name: Check if send_nsca exists
+      ansible.builtin.stat:
         path: /usr/sbin/send_nsca
       register: send_nsca_stat
 
-    - name: Print send_nsca existence
+    - name: Print send_nsca presence
       debug:
-        var: send_nsca_stat.stat.exists
+        msg: "send_nsca is present at /usr/sbin/send_nsca"
+      when: send_nsca_stat.stat.exists
 
-    - name: Show send_nsca help output
-      command: /usr/sbin/send_nsca --help
-      register: send_nsca_help
-      ignore_errors: yes
-
-    - name: Print send_nsca help output
-      debug:
-        var: send_nsca_help.stdout
+    - name: Fail if send_nsca is not present
+      fail:
+        msg: "send_nsca is NOT present in this Execution Environment!"
+      when: not send_nsca_stat.stat.exists
