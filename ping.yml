@@ -6,6 +6,7 @@
     centreon_host_ip: 13.239.232.132
     centreon_status: "0"
     job_result_message: ""
+    nsca_cfg: "/etc/send_nsca.cfg"
 
   tasks:
 
@@ -28,10 +29,8 @@
 
       always:
 
-        - name: Send job status to Centreon
+        - name: Send job status to Centreon using NSCA
           shell: |
-            echo "[$(date +%s)] PROCESS_SERVICE_CHECK_RESULT;AWX-SERVER;AWX Job Status;{{ centreon_status }};{{ job_result_message }}" \
-            | sudo -u centreon-engine tee -a /var/lib/centreon-engine/rw/centengine.cmd > /dev/null
-          delegate_to: "{{ centreon_host_ip }}"
-          become: true
-          become_user: admin
+            printf "AWX-SERVER\tAWX Job Status\t{{ centreon_status }}\t{{ job_result_message }}\n" | \
+            /usr/sbin/send_nsca -H {{ centreon_host_ip }} -c {{ nsca_cfg }}
+          delegate_to: localhost
