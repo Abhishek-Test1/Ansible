@@ -1,33 +1,12 @@
 ---
-- name: Send job status to Centreon via NSCA
+- name: Send Centreon status update
   hosts: localhost
-  gather_facts: false
-  vars:
-    # Map job_status string to NSCA return code
-    nsca_return_code_map:
-      OK: 0
-      WARNING: 1
-      CRITICAL: 2
-      UNKNOWN: 3
+  gather_facts: no
 
-  tasks:
-    - name: Determine NSCA return code
-      set_fact:
-        nsca_return_code: "{{ nsca_return_code_map[job_status] | default(3) }}"
-
-    - name: Create NSCA input line
-      ansible.builtin.copy:
-        dest: /tmp/nsca_input.txt
-        content: "{{ centreon_host_name }}\t{{ centreon_service }}\t{{ nsca_return_code }}\tJob status: {{ job_status }}\n"
-        mode: '0644'
-
-    - name: Send status to Centreon server using send_nsca
-      ansible.builtin.shell: >
-        send_nsca -H {{ centreon_server_ip }} -c /etc/send_nsca.cfg < /tmp/nsca_input.txt
-      register: send_nsca_result
-      failed_when: send_nsca_result.rc != 0
-      changed_when: false
-
-    - name: Debug send_nsca output
-      ansible.builtin.debug:
-        var: send_nsca_result.stdout
+  roles:
+    - role: send_nsca_result
+      vars:
+        host_name: "awxhost01"
+        service_description: "AppDeployStatus"
+        return_code: 0
+        plugin_output: "Deployment successful"
