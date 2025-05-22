@@ -3,7 +3,7 @@
   hosts: localhost
   gather_facts: false
   vars:
-    centreon_ip: "13.239.232.132"   # <-- replace with your actual Centreon IP
+    centreon_ip: "ec2-13-210-66-234.ap-southeast-2.compute.amazonaws.com"   # Replace with your actual Centreon IP
     nsca_return_code_map:
       OK: 0
       WARNING: 1
@@ -11,6 +11,14 @@
       UNKNOWN: 3
 
   tasks:
+    - name: Ensure required variables are defined
+      assert:
+        that:
+          - state is defined
+          - service_description is defined
+          - output is defined
+        fail_msg: "Required variable(s) missing: state, service_description or output"
+
     - name: Determine NSCA return code
       set_fact:
         nsca_return_code: "{{ nsca_return_code_map[state] | default(3) }}"
@@ -26,7 +34,7 @@
         mode: '0644'
 
     - name: Send status to Centreon using send_nsca
-      ansible.builtin.shell: >
+      ansible.builtin.shell: |
         send_nsca -H {{ centreon_ip }} -c /etc/send_nsca.cfg < /tmp/nsca_input.txt
       register: send_nsca_result
       failed_when: send_nsca_result.rc != 0
