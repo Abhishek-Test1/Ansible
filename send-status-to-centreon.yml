@@ -3,7 +3,6 @@
   hosts: localhost
   gather_facts: false
   vars:
-    # Map job_status string to NSCA return code
     nsca_return_code_map:
       OK: 0
       WARNING: 1
@@ -17,7 +16,7 @@
 
     - name: Create NSCA input line
       copy:
-        dest: /tmp/nsca_input.txt
+        dest: "/tmp/nsca_input.txt"
         content: "{{ inventory_hostname }}\t{{ service_description }}\t{{ nsca_return_code }}\t{{ output }}\n"
         mode: '0644'
 
