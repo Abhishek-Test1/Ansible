@@ -1,0 +1,4 @@
+---
+nsca_server: "13.239.232.132"
+nsca_port: 5667
+nsca_config: "/etc/send_nsca.cfg"
