@@ -1,0 +1,4 @@
+---
+# tasks file for send_nsca_result
+- debug:
+    msg: "This is the send_nsca_result role"
