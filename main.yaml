@@ -1,0 +1,7 @@
+---
+- name: Send passive result to Centreon using send_nsca
+  shell: |
+    printf "{{ host_name }}\t{{ service_description }}\t{{ return_code }}\t{{ plugin_output }}\n" | \
+    send_nsca -H {{ nsca_server }} -p {{ nsca_port }} -c {{ nsca_config }}
+  delegate_to: localhost
+  run_once: true
