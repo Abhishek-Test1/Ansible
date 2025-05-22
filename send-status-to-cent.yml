@@ -3,7 +3,7 @@
   hosts: localhost
   gather_facts: false
   vars:
-    # Map job status strings to NSCA return codes
+    centreon_ip: "13.239.232.132"   # <-- replace with your actual Centreon IP
     nsca_return_code_map:
       OK: 0
       WARNING: 1
@@ -15,9 +15,9 @@
       set_fact:
         nsca_return_code: "{{ nsca_return_code_map[state] | default(3) }}"
 
-    - name: Debug - Environment variable CENTREON_IP
+    - name: Debug - Centreon IP variable
       ansible.builtin.debug:
-        msg: "CENTREON_IP = {{ lookup('env', 'CENTREON_IP') }}"
+        msg: "centreon_ip = {{ centreon_ip }}"
 
     - name: Create NSCA input line
       ansible.builtin.copy:
@@ -27,7 +27,7 @@
 
     - name: Send status to Centreon using send_nsca
       ansible.builtin.shell: >
-        send_nsca -H {{ lookup('env', 'CENTREON_IP') }} -c /etc/send_nsca.cfg < /tmp/nsca_input.txt
+        send_nsca -H {{ centreon_ip }} -c /etc/send_nsca.cfg < /tmp/nsca_input.txt
       register: send_nsca_result
       failed_when: send_nsca_result.rc != 0
       changed_when: false
