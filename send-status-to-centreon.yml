@@ -2,8 +2,8 @@
 - name: Send job status to Centreon via NSCA
   hosts: localhost
   gather_facts: false
-
   vars:
+    # Map job_status/state string to NSCA return code
     nsca_return_code_map:
       OK: 0
       WARNING: 1
@@ -13,21 +13,21 @@
   tasks:
     - name: Determine NSCA return code
       set_fact:
-        nsca_return_code: "{{ nsca_return_code_map[state] | default(3) }}"
+        nsca_return_code: "{{ nsca_return_code_map[state | upper] | default(3) }}"
 
     - name: Create NSCA input file
-      copy:
+      ansible.builtin.copy:
         dest: /tmp/nsca_input.txt
-        content: "localhost\t{{ service_description }}\t{{ nsca_return_code }}\t{{ output }}\n"
+        content: "{{ inventory_hostname }}\t{{ service_description }}\t{{ nsca_return_code }}\t{{ output }}\n"
         mode: '0644'
 
     - name: Send status to Centreon server using send_nsca
-      shell: >
-        send_nsca -H $CENTREON_IP -c /etc/send_nsca.cfg < /tmp/nsca_input.txt
+      ansible.builtin.command: >
+        send_nsca -H {{ lookup('env', 'CENTREON_IP') }} -c /etc/send_nsca.cfg < /tmp/nsca_input.txt
       register: send_nsca_result
       failed_when: send_nsca_result.rc != 0
       changed_when: false
 
     - name: Debug send_nsca output
-      debug:
+      ansible.builtin.debug:
         var: send_nsca_result.stdout
