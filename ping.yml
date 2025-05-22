@@ -3,7 +3,7 @@
   tasks:
     - name: Ping target machines
       ansible.builtin.ping:
-- import_playbook: send-status-to-cent.yaml
+- import_playbook: send-status-to-cent.yml
   vars:
     service_description: "My Service"
     state: "OK"
