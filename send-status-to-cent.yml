@@ -27,7 +27,7 @@
 
     - name: Send status to Centreon using send_nsca
       ansible.builtin.shell: >
-        send_nsca -H "$CENTREON_IP" -c /etc/send_nsca.cfg < /tmp/nsca_input.txt
+        send_nsca -H {{ lookup('env', 'CENTREON_IP') }} -c /etc/send_nsca.cfg < /tmp/nsca_input.txt
       register: send_nsca_result
       failed_when: send_nsca_result.rc != 0
       changed_when: false
