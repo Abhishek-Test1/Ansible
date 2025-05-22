@@ -3,6 +3,7 @@
   hosts: localhost
   gather_facts: false
   vars:
+    # Map job status string to NSCA return code
     nsca_return_code_map:
       OK: 0
       WARNING: 1
@@ -16,17 +17,17 @@
 
     - name: Create NSCA input line
       copy:
-        dest: "/tmp/nsca_input.txt"
+        dest: /tmp/nsca_input.txt
         content: "{{ inventory_hostname }}\t{{ service_description }}\t{{ nsca_return_code }}\t{{ output }}\n"
         mode: '0644'
 
-    - name: Send status to Centreon server using send_nsca
+    - name: Send status to Centreon using send_nsca
       shell: >
-        send_nsca -H $CENTREON_IP -c /etc/send_nsca.cfg < /tmp/nsca_input.txt
+        send_nsca -H "$CENTREON_IP" -c /etc/send_nsca.cfg < /tmp/nsca_input.txt
       register: send_nsca_result
       failed_when: send_nsca_result.rc != 0
       changed_when: false
 
-    - name: Debug send_nsca output
+    - name: Debug NSCA result
       debug:
         var: send_nsca_result.stdout
